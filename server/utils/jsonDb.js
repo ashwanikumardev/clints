@@ -3,21 +3,50 @@ const path = require('path');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-const DB_PATH = path.join(__dirname, '../db');
+// Database directory - handle both local and serverless environments
+const DB_DIR = process.env.VERCEL 
+  ? '/tmp/db' 
+  : path.join(__dirname, '../db');
 
 // Ensure db directory exists
 const ensureDbDir = async () => {
   try {
-    await fs.access(DB_PATH);
+    await fs.access(DB_DIR);
   } catch {
-    await fs.mkdir(DB_PATH, { recursive: true });
+    await fs.mkdir(DB_DIR, { recursive: true });
+  }
+};
+
+// Initialize database with default data if needed
+const initializeDatabase = async () => {
+  if (process.env.VERCEL) {
+    // In serverless environment, copy initial data from source
+    const sourceDbDir = path.join(__dirname, '../db');
+    try {
+      const files = ['users.json', 'clients.json', 'projects.json', 'invoices.json'];
+      for (const file of files) {
+        const sourcePath = path.join(sourceDbDir, file);
+        const targetPath = path.join(DB_DIR, file);
+        try {
+          const sourceData = await fs.readFile(sourcePath, 'utf8');
+          await fs.writeFile(targetPath, sourceData);
+        } catch (error) {
+          // If source file doesn't exist, create empty array
+          await fs.writeFile(targetPath, '[]');
+        }
+      }
+    } catch (error) {
+      console.log('Database initialization skipped:', error.message);
+    }
   }
 };
 
 // Read JSON file
 const readJsonFile = async (filename) => {
   try {
-    const filePath = path.join(DB_PATH, filename);
+    await ensureDbDir();
+    await initializeDatabase();
+    const filePath = path.join(DB_DIR, filename);
     const data = await fs.readFile(filePath, 'utf8');
     return JSON.parse(data);
   } catch (error) {
@@ -28,7 +57,7 @@ const readJsonFile = async (filename) => {
 // Write JSON file
 const writeJsonFile = async (filename, data) => {
   await ensureDbDir();
-  const filePath = path.join(DB_PATH, filename);
+  const filePath = path.join(DB_DIR, filename);
   await fs.writeFile(filePath, JSON.stringify(data, null, 2));
 };
 
