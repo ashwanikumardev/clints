@@ -51,12 +51,13 @@
   },
   {
     "id": "1762791028936e5h1mvkwx",
-    "name": "Ashwani Yadav",
+    "name": "Ajit Kumar",
     "email": "ajitkumar6205540757@gmail.com",
-    "password": "$2b$10$T2yFrIAvHuq6NKbPhcHBYOsb/rfCml/Y9MO9jn9qNi0h9QUmnpNjm",
+    "password": "$2b$10$9bltrNkUSXm/oXQu26n6ZedfSnJkM5FO1q1DA0qo1SSJrbhudTzpi",
     "role": "admin",
     "isActive": true,
     "createdAt": "2025-11-10T16:10:28.938Z",
-    "lastLogin": "2025-11-10T16:10:41.669Z"
+    "lastLogin": "2025-11-10T16:32:16.802Z",
+    "updatedAt": "2025-11-10T16:31:39.591Z"
   }
 ]
