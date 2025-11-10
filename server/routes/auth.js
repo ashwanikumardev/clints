@@ -8,16 +8,19 @@ const router = express.Router();
 // @access  Public
 router.post('/register', async (req, res) => {
   try {
+    console.log('🔐 Registration attempt:', { email: req.body.email, hasPassword: !!req.body.password });
     const { name, email, password } = req.body;
 
     // Validation
     if (!name || !email || !password) {
+      console.log('❌ Registration validation failed: missing fields');
       return res.status(400).json({ 
         message: 'Please provide name, email, and password' 
       });
     }
 
     if (password.length < 6) {
+      console.log('❌ Registration validation failed: password too short');
       return res.status(400).json({ 
         message: 'Password must be at least 6 characters long' 
       });
@@ -25,6 +28,7 @@ router.post('/register', async (req, res) => {
 
     // Create user
     const user = await userDb.create({ name, email, password });
+    console.log('✅ User created successfully:', user.email);
 
     // Generate JWT token
     const token = jwt.sign(
@@ -33,6 +37,7 @@ router.post('/register', async (req, res) => {
       { expiresIn: '7d' }
     );
 
+    console.log('✅ Registration successful for:', user.email);
     res.status(201).json({
       message: 'User registered successfully',
       token,
@@ -40,13 +45,13 @@ router.post('/register', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Registration error:', error);
+    console.error('❌ Registration error:', error);
     if (error.message === 'User already exists') {
       return res.status(400).json({ message: error.message });
     }
     res.status(500).json({ 
       message: 'Server error during registration',
-      error: error.message 
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
     });
   }
 });
@@ -56,10 +61,12 @@ router.post('/register', async (req, res) => {
 // @access  Public
 router.post('/login', async (req, res) => {
   try {
+    console.log('🔐 Login attempt:', { email: req.body.email, hasPassword: !!req.body.password });
     const { email, password } = req.body;
 
     // Validation
     if (!email || !password) {
+      console.log('❌ Login validation failed: missing fields');
       return res.status(400).json({ 
         message: 'Please provide email and password' 
       });
@@ -68,6 +75,7 @@ router.post('/login', async (req, res) => {
     // Validate user credentials
     const user = await userDb.validatePassword(email, password);
     if (!user) {
+      console.log('❌ Login failed: invalid credentials for', email);
       return res.status(401).json({ 
         message: 'Invalid credentials' 
       });
@@ -83,6 +91,7 @@ router.post('/login', async (req, res) => {
       { expiresIn: '7d' }
     );
 
+    console.log('✅ Login successful for:', user.email);
     res.json({
       message: 'Login successful',
       token,
@@ -90,10 +99,10 @@ router.post('/login', async (req, res) => {
     });
 
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('❌ Login error:', error);
     res.status(500).json({ 
       message: 'Server error during login',
-      error: error.message 
+      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
     });
   }
 });

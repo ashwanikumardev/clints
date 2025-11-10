@@ -48,5 +48,15 @@
     "isActive": true,
     "createdAt": "2025-11-10T15:53:31.592Z",
     "lastLogin": "2025-11-10T15:53:31.960Z"
+  },
+  {
+    "id": "1762791028936e5h1mvkwx",
+    "name": "Ashwani Yadav",
+    "email": "ajitkumar6205540757@gmail.com",
+    "password": "$2b$10$T2yFrIAvHuq6NKbPhcHBYOsb/rfCml/Y9MO9jn9qNi0h9QUmnpNjm",
+    "role": "admin",
+    "isActive": true,
+    "createdAt": "2025-11-10T16:10:28.938Z",
+    "lastLogin": "2025-11-10T16:10:41.669Z"
   }
 ]

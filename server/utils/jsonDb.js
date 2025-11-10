@@ -19,25 +19,65 @@ const ensureDbDir = async () => {
 
 // Initialize database with default data if needed
 const initializeDatabase = async () => {
-  if (process.env.VERCEL) {
-    // In serverless environment, copy initial data from source
-    const sourceDbDir = path.join(__dirname, '../db');
-    try {
-      const files = ['users.json', 'clients.json', 'projects.json', 'invoices.json'];
+  try {
+    const files = ['users.json', 'clients.json', 'projects.json', 'invoices.json'];
+    
+    if (process.env.VERCEL) {
+      // In serverless environment, copy initial data from source
+      const sourceDbDir = path.join(__dirname, '../db');
+      console.log('🔧 Initializing database for Vercel environment...');
+      
       for (const file of files) {
         const sourcePath = path.join(sourceDbDir, file);
         const targetPath = path.join(DB_DIR, file);
+        
         try {
-          const sourceData = await fs.readFile(sourcePath, 'utf8');
-          await fs.writeFile(targetPath, sourceData);
-        } catch (error) {
-          // If source file doesn't exist, create empty array
-          await fs.writeFile(targetPath, '[]');
+          // Check if target file already exists
+          await fs.access(targetPath);
+          console.log(`✅ Database file exists: ${file}`);
+        } catch {
+          // Target file doesn't exist, try to copy from source
+          try {
+            const sourceData = await fs.readFile(sourcePath, 'utf8');
+            await fs.writeFile(targetPath, sourceData);
+            console.log(`📋 Copied database file: ${file}`);
+          } catch (error) {
+            // If source file doesn't exist, create with default data
+            let defaultData = '[]';
+            if (file === 'users.json') {
+              // Create default admin user for production
+              const bcrypt = require('bcrypt');
+              const hashedPassword = await bcrypt.hash('password123', 10);
+              defaultData = JSON.stringify([{
+                id: 'admin-' + Date.now(),
+                name: 'Admin User',
+                email: 'admin@example.com',
+                password: hashedPassword,
+                role: 'admin',
+                isActive: true,
+                createdAt: new Date().toISOString(),
+                lastLogin: null
+              }], null, 2);
+            }
+            await fs.writeFile(targetPath, defaultData);
+            console.log(`🆕 Created default database file: ${file}`);
+          }
         }
       }
-    } catch (error) {
-      console.log('Database initialization skipped:', error.message);
+    } else {
+      // Local environment - ensure files exist
+      for (const file of files) {
+        const filePath = path.join(DB_DIR, file);
+        try {
+          await fs.access(filePath);
+        } catch {
+          await fs.writeFile(filePath, '[]');
+          console.log(`🆕 Created local database file: ${file}`);
+        }
+      }
     }
+  } catch (error) {
+    console.error('❌ Database initialization error:', error.message);
   }
 };
 
