@@ -3,6 +3,12 @@ import axios from 'axios';
 // API Configuration for different environments
 const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
+// Debug logging
+console.log('🔧 Auth Service Debug Info:');
+console.log('API_BASE_URL:', API_BASE_URL);
+console.log('REACT_APP_API_URL:', process.env.REACT_APP_API_URL);
+console.log('NODE_ENV:', process.env.NODE_ENV);
+
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -69,8 +75,21 @@ export interface UserResponse {
 
 export const authService = {
   async login(email: string, password: string): Promise<LoginResponse> {
-    const response = await api.post('/auth/login', { email, password });
-    return response.data;
+    try {
+      console.log('🔐 Attempting login with:', { email, apiUrl: API_BASE_URL });
+      const response = await api.post('/auth/login', { email, password });
+      console.log('✅ Login response:', response.data);
+      return response.data;
+    } catch (error: any) {
+      console.error('❌ Login error:', {
+        message: error.message,
+        status: error.response?.status,
+        data: error.response?.data,
+        url: error.config?.url,
+        baseURL: error.config?.baseURL
+      });
+      throw error;
+    }
   },
 
   async register(name: string, email: string, password: string): Promise<RegisterResponse> {
