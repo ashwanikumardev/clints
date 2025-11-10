@@ -1,0 +1,22 @@
+[
+  {
+    "id": "1762675480343hqa77xbcs",
+    "name": "Test User",
+    "email": "test@example.com",
+    "password": "$2b$10$vO2yhsOMuH6Qyt.uT.IJHeKiK.5aZ5fUydHWUom4glm2ZB0Lt/Nze",
+    "role": "admin",
+    "isActive": true,
+    "createdAt": "2025-11-09T08:04:40.343Z",
+    "lastLogin": "2025-11-09T08:05:06.677Z"
+  },
+  {
+    "id": "1762680564654tl0tjtx8h",
+    "name": "Ashwani Yadav",
+    "email": "ashwiniyadav765435@gmail.com",
+    "password": "$2b$10$3ii1tYYz0h8xnhws4O1wROnsBiC1dZoGV2jaE38QtZ1QbEzyHy8ei",
+    "role": "admin",
+    "isActive": true,
+    "createdAt": "2025-11-09T09:29:24.657Z",
+    "lastLogin": "2025-11-09T13:47:30.526Z"
+  }
+]
