@@ -85,11 +85,14 @@ app.use('*', (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`💾 Database: JSON Files (No MongoDB required)`);
-  console.log(`🌐 API URL: http://localhost:${PORT}`);
-});
+// Only start server if not running as serverless function (Vercel)
+if (process.env.VERCEL !== '1') {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
+    console.log(`📊 Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`💾 Database: JSON Files (No MongoDB required)`);
+    console.log(`🌐 API URL: http://localhost:${PORT}`);
+  });
+}
 
 module.exports = app;

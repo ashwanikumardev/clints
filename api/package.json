@@ -1,0 +1,8 @@
+{
+  "name": "api",
+  "version": "1.0.0",
+  "description": "Vercel serverless function for API",
+  "main": "index.js",
+  "dependencies": {}
+}
+

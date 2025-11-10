@@ -9,7 +9,7 @@ import {
   PhoneIcon,
   UserIcon
 } from '@heroicons/react/24/outline';
-import axios from 'axios';
+import api from '../utils/api';
 import toast from 'react-hot-toast';
 
 interface Client {
@@ -50,7 +50,7 @@ const ClientsPage: React.FC = () => {
   const fetchClients = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('/api/clients', {
+      const response = await api.get('/clients', {
         params: {
           search: searchTerm,
           status: statusFilter,
@@ -78,11 +78,11 @@ const ClientsPage: React.FC = () => {
     try {
       if (editingClient) {
         // Update existing client
-        await axios.put(`/api/clients/${editingClient.id}`, formData);
+        await api.put(`/clients/${editingClient.id}`, formData);
         toast.success('Client updated successfully');
       } else {
         // Create new client
-        await axios.post('/api/clients', formData);
+        await api.post('/clients', formData);
         toast.success('Client created successfully');
       }
       
@@ -102,7 +102,7 @@ const ClientsPage: React.FC = () => {
     }
 
     try {
-      await axios.delete(`/api/clients/${id}`);
+      await api.delete(`/clients/${id}`);
       toast.success('Client deleted successfully');
       fetchClients();
     } catch (error: any) {
